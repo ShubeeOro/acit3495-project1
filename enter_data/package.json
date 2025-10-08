@@ -1,0 +1,16 @@
+{
+  "name": "enter-data-service",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "axios": "latest",
+    "body-parser": "latest",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "latest",
+    "ejs": "^3.1.10",
+    "express": "latest",
+    "jsonwebtoken": "latest",
+    "mysql2": "latest",
+    "path": "^0.12.7"
+  }
+}

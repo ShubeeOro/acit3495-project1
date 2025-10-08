@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h2 id="loginTitle">Login</h2>
+
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="/register">Register</a></p>
+
+    <h3 id="loggedInMessage" style="display:none;">You are logged in now.</h3>
+    <button id="goToResults" style="display:none;">Go to Show Results</button>
+    <button id="goToEnterData" style="display:none;">Go to Enter Data</button>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+
+            if (data.token) {
+                // Store token in a cookie
+                document.cookie = `token=${data.token}; path=/;`;
+
+                // Hide the login form and change the title
+                document.getElementById("loginForm").style.display = "none";
+                document.getElementById("loginTitle").innerText = "Welcome!";
+                document.getElementById("loggedInMessage").style.display = "block";
+
+                // Show navigation buttons
+                document.getElementById("goToResults").style.display = "block";
+                document.getElementById("goToEnterData").style.display = "block";
+            } else {
+                alert("Login failed: " + (data.error || "Unknown error"));
+            }
+        });
+
+        document.getElementById("goToResults").addEventListener("click", function() {
+            window.location.href = "http://127.0.0.1:5004/";
+        });
+
+        document.getElementById("goToEnterData").addEventListener("click", function() {
+            window.location.href = "http://127.0.0.1:5002/";
+        });
+        console.log("{{enter_data}}")
+    </script>
+</body>
+</html>

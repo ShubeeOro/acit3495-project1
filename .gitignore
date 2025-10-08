@@ -1,0 +1,4 @@
+auth_service/venv
+analytics_service/venv
+show_results/node_modules
+enter_data/node_modules
