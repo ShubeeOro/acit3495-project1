@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Enter Data Service</title>
+</head>
+<body>
+    <h2>You have been granted access to the service, welcome user <%=user.id%></h2>
+    <form action="/submit-temperature" method="post" enctype="application/x-www-form-urlencoded">
+        <label for="temperature">Enter temperature</label>
+        <input type="number" name="temperature" id="temperature" required>
+        <br>
+        <button type="submit">Enter Data</button>
+    </form>
+</body>
+</html>

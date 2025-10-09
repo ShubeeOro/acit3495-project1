@@ -1,0 +1,4 @@
+auth-service
+https://flask-jwt-extended.readthedocs.io/en/stable/token_locations.html
+
+use container name to refernce other containers

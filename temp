@@ -44,3 +44,19 @@
     depends_on:
       - mongodb
       - auth_service
+
+    db.connect((err) => {
+      if (err) {
+        if (connectionAttempts > 0) {
+          console.error("Database connection failed: " + err.stack);
+          console.log(`Retrying in ${delay / 1000} seconds...`);
+          connectionAttempts--;
+          setTimeout(connect, delay); // Retry after delay
+        } else {
+          console.error("Failed to connect to MySQL after several attempts.");
+          process.exit(1); // Exit process if unable to connect after retries
+        }
+      } else {
+        console.log("Connected to MySQL2");
+      }
+    });

@@ -5,6 +5,7 @@ import os
 import time
 from dotenv import load_dotenv
 from flask_cors import CORS
+import json
 
 load_dotenv()
 
@@ -16,6 +17,7 @@ app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "supersecretkey")
 
 app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']  # Accept JWT from both headers and cookies
 app.config['JWT_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['JWT_COOKIE_SAMESITE'] = 'Lax'
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False  # Disable CSRF protection for now (optional)
 
 jwt = JWTManager(app)
@@ -116,6 +118,14 @@ def login():
         # Function to create access token in cookies
         access_token = create_access_token(identity=str(user.get("id")))
         set_access_cookies(response, access_token)
+        response.set_cookie(
+            key="user_id",
+            value=str(user.get("id")),  # store as JSON string
+            max_age=900,         # 900 seconds = 15 minutes
+            httponly=True,       # can't be accessed by JS
+            secure=False,        # set True if using HTTPS
+            samesite="Lax"
+            )
         return response
         """
         access_token = create_access_token(identity=str(user.get("id")))
