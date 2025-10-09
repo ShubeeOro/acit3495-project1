@@ -3,9 +3,23 @@ import os
 import time
 import pymysql
 import pymongo
+from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity, set_access_cookies
+from flask_cors import CORS
+
 
 
 app = Flask(__name__)
+CORS(app)
+
+# Configure JWT
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "supersecretkey")
+
+app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']  # Accept JWT from both headers and cookies
+app.config['JWT_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['JWT_COOKIE_SAMESITE'] = 'Lax'
+app.config['JWT_COOKIE_CSRF_PROTECT'] = False  # Disable CSRF protection for now (optional)
+
+jwt = JWTManager(app)
 
 # Load environment variables
 MYSQL_HOST = os.getenv("MYSQL_HOST", "mysql_db")
@@ -36,13 +50,12 @@ analytics_collection = mongo_db["analytics"]
 print("Connected to MongoDB")
 
 # Fetch and process data
-def compute_analytics():
+def compute_analytics(user_id):
     try:
-        user_id = request.cookies.get('user_id')
         conn = get_mysql_connection()
         with conn.cursor() as cursor:
             print("Executing query to fetch temperature data...", flush=True)
-            cursor.execute(f"SELECT * FROM temperatures WHERE user_id = {user_id}")
+            cursor.execute("SELECT * FROM temperatures WHERE user_id = %s", (int(user_id),))
             results = cursor.fetchall()
             print("Query executed. Results fetched:", results, flush=True)
             conn.close()
@@ -71,8 +84,12 @@ def compute_analytics():
         return {"error": str(e)}, 500
 
 @app.route('/compute_analytics', methods=['GET'])
+@jwt_required()
 def compute_analytics_endpoint():
-    compute_analytics()
+    user_id = get_jwt_identity()
+    print("line 92:analytics_service")
+    print(user_id)
+    compute_analytics(user_id)
 
     # Send a message saying that the analytics have been computed
     return jsonify({"message": "Latest analytics computed successfully"})

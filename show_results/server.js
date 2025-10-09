@@ -83,11 +83,12 @@ app.get("/", async (req, res) => {
     // Check if the user is authenticated with JWT
     await authenticateToken(req, res);
     } else {
-    console.log(req.cookies.user);
+    console.log("Line 86:show_results/server.js")
+    console.log(req.cookies.user.token);
 
     const url = process.env.ANALYTICS_SERVICE_URL || 'http://analytics_service:5003/compute_analytics';
     try {
-        const response = await axios.get(url);
+        const response = await axios.get(url, { headers: { Authorization: `Bearer ${req.cookies.user.token}` } } );
         console.log(response.data);
     } catch (error) {
         res.status(500).json({ error: error.message });
