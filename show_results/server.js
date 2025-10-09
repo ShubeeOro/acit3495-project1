@@ -15,7 +15,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo_db:27017/data_analytics';
-const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'http://afd29919d80da4b4c9d92a6219b3f75d-230902164.us-west-2.elb.amazonaws.com:5001/protected';
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
 
 // Function to establish MongoDB connection with retries
 const connectToDatabase = () => {
