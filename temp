@@ -1,0 +1,46 @@
+  enter_data:
+    build: ./enter_data
+    container_name: enter_data
+    restart: always
+    ports:
+      - "5002:5002"
+    environment:
+      - DB_HOST=mysql_db
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=data_collection
+      - PORT=5002
+    depends_on:
+      - mysql
+      - auth_service
+
+  analytics_service:
+    build: ./analytics_service
+    container_name: analytics_service
+    restart: always
+    ports:
+      - "5003:5003"
+    environment:
+      - MYSQL_HOST=mysql_db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_DB=data_collection
+      - MONGO_URI=mongodb://mongo_db:27017/
+      - PORT=5003
+    depends_on:
+      - mysql
+      - mongodb
+
+  show_results:
+    build: ./show_results
+    container_name: show_results
+    restart: always
+    ports:
+      - "5004:5004"
+    environment:
+      - MONGO_URI=mongodb://mongo_db:27017/data_analytics
+      - AUTH_SERVICE_URL=http://auth_service:5001/protected
+      - PORT=5004
+    depends_on:
+      - mongodb
+      - auth_service

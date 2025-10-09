@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,9 +39,9 @@
 
             const data = await response.json();
 
-            if (data.token) {
-                // Store token in a cookie
-                document.cookie = `token=${data.token}; path=/;`;
+            console.log(data)
+
+            if (data) {
 
                 // Hide the login form and change the title
                 document.getElementById("loginForm").style.display = "none";
@@ -62,7 +63,6 @@
         document.getElementById("goToEnterData").addEventListener("click", function() {
             window.location.href = "http://127.0.0.1:5002/";
         });
-        console.log("{{enter_data}}")
     </script>
 </body>
 </html>

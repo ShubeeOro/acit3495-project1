@@ -1,3 +1,4 @@
+
 services:
   mysql:
     image: mysql:latest
@@ -9,10 +10,10 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./db/mysql-init.sql:/docker-entrypoint-initdb.d/1.sql:ro
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
 
   mongodb:
     image: mongo:latest
@@ -22,8 +23,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-      - ./db/mongo-init.js:/docker-entrypoint-initdb.d/1.js:ro
-
   auth_service:
     build: ./auth_service
     container_name: auth_service
@@ -54,37 +53,6 @@ services:
       - PORT=5002
     depends_on:
       - mysql
-      - auth_service
-
-  analytics_service:
-    build: ./analytics_service
-    container_name: analytics_service
-    restart: always
-    ports:
-      - "5003:5003"
-    environment:
-      - MYSQL_HOST=mysql_db
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=password
-      - MYSQL_DB=data_collection
-      - MONGO_URI=mongodb://mongo_db:27017/
-      - PORT=5003
-    depends_on:
-      - mysql
-      - mongodb
-
-  show_results:
-    build: ./show_results
-    container_name: show_results
-    restart: always
-    ports:
-      - "5004:5004"
-    environment:
-      - MONGO_URI=mongodb://mongo_db:27017/data_analytics
-      - AUTH_SERVICE_URL=http://auth_service:5001/protected
-      - PORT=5004
-    depends_on:
-      - mongodb
       - auth_service
 
 volumes:

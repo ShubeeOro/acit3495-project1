@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template, redirect, make_response
-from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity, set_access_cookies
 import pymysql
 import os
 import time
@@ -17,8 +17,6 @@ app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "supersecretkey")
 app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']  # Accept JWT from both headers and cookies
 app.config['JWT_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False  # Disable CSRF protection for now (optional)
-
-ENTER_DATA = os.getenv("ENTER_DATA", "localhost:5002")
 
 jwt = JWTManager(app)
 
@@ -94,7 +92,7 @@ def register():
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "GET":
-        return render_template("login.html", enter_data=ENTER_DATA)
+        return render_template("login.html")
 
     data = request.json if request.is_json else request.form
     username = data.get("username")
@@ -114,18 +112,25 @@ def login():
 
         print("User:", user)
         print("User ID:", user.get("id"))
+        response = jsonify({"msg": "login successful"})
+        # Function to create access token in cookies
+        access_token = create_access_token(identity=str(user.get("id")))
+        set_access_cookies(response, access_token)
+        return response
+        """
         access_token = create_access_token(identity=str(user.get("id")))
 
         response = jsonify({"token": access_token})  # Return token instead of redirecting
         response.set_cookie("token", access_token, httponly=True, samesite="None", secure=False)
 
         return response
+        """
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
 @app.route("/protected", methods=["GET"])
-@jwt_required(locations=["cookies", "headers"])
+@jwt_required()
 def protected():
     user = get_jwt_identity()
     return jsonify({"message": "Access granted", "user": user})
