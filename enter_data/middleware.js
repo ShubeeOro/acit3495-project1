@@ -9,7 +9,7 @@ async function authenticateToken(req, res, next) {
 
     if (!token) {
         console.log("No token found. Redirecting to login...");
-        return res.redirect(`http://127.0.0.1:5001/login`);
+        return res.redirect(`http://auth_service:5001/login`);
     }
 
     try {
