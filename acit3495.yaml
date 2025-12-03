@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: service-a
-          image: shubeeoro/acit3495-project1-analytics_service:v1
+          image: shubeeoro/acit3495-project1-analytics_service
           ports:
             - containerPort: 5003
           resources:
@@ -99,7 +99,7 @@ spec:
     spec:
       containers:
         - name: service-b
-          image: shubeeoro/acit3495-project1-show_results:v1
+          image: shubeeoro/acit3495-project1-show_results
           ports:
             - containerPort: 5004
           resources:
@@ -166,7 +166,7 @@ spec:
     spec:
       containers:
         - name: service-c
-          image: shubeeoro/acit3495-project1-auth_service:v1
+          image: shubeeoro/acit3495-project1-auth_service
           ports:
             - containerPort: 5001
           env:
@@ -249,7 +249,7 @@ spec:
     spec:
       containers:
         - name: service-d
-          image: shubeeoro/acit3495-project1-enter_data:v1
+          image: shubeeoro/acit3495-project1-enter_data
           ports:
             - containerPort: 5002
           env:
