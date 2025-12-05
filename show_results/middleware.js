@@ -2,7 +2,10 @@ const axios = require("axios");
 
 async function authenticateToken(req, res, next) {
     let token = req.cookies.access_token_cookie;
-    const AUTH_SERVICE_URL = "http://auth_service:5001";
+    // const AUTH_SERVICE_URL = "http://auth_service:5001";
+    const host = req.headers.host;
+
+    const AUTH_SERVICE_URL = `http://${host.replace(/:\d+$/, '')}:${5001}`;
     console.log(AUTH_SERVICE_URL);
 
     console.log("Authenticating user... Token received:", token);

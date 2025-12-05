@@ -57,6 +57,9 @@ const Analytics = mongoose.model('Analytics', AnalyticsSchema);
 // Function to verify JWT token
 async function verifyToken(req) {
     let token = req.cookies.access_token_cookie;  // Read from both cookies
+    const host = req.headers.host;
+
+    const AUTH_SERVICE_URL = `http://${host.replace(/:\d+$/, '')}:${5001}`;
     if (!token && req.headers.authorization) {
         token = req.headers.authorization.split(' ')[1];  // Fallback to Authorization header
     }
@@ -86,7 +89,13 @@ app.get("/", async (req, res) => {
     console.log("Line 86:show_results/server.js")
     console.log(req.cookies.user.token);
 
-    const url = process.env.ANALYTICS_SERVICE_URL || 'http://analytics_service:5003/compute_analytics';
+    let token = req.cookies.access_token_cookie;
+    // const AUTH_SERVICE_URL = "http://auth_service:5001";
+    const host = req.headers.host;
+
+    const AUTH_SERVICE_URL = `http://${host.replace(/:\d+$/, '')}:${5001}`;
+
+    const url = `http://${host.replace(/:\d+$/, '')}:${5003}/compute_analytics`;
     try {
         const response = await axios.get(url, { headers: { Authorization: `Bearer ${req.cookies.user.token}` } } );
         console.log(response.data);
@@ -115,7 +124,13 @@ app.get('/results', async (req, res) => {
     //    return res.status(401).json({ error: 'Invalid token' });
     //}
     // Fetch the latest analytics data from the database
-    const url = process.env.ANALYTICS_SERVICE_URL || 'http://analytics_service:5003/compute_analytics';
+
+    const host = req.headers.host;
+
+    const AUTH_SERVICE_URL = `http://${host.replace(/:\d+$/, '')}:${5001}`;
+
+    const url = `http://${host.replace(/:\d+$/, '')}:${5003}/compute_analytics`;
+    // const url = process.env.ANALYTICS_SERVICE_URL || 'http://analytics_service:5003/compute_analytics';
 
     // Send a GET request to the analytics service
     try {
